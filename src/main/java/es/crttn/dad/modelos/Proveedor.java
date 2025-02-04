@@ -4,8 +4,6 @@ import org.bson.types.ObjectId;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
-import java.util.List;
-
 public class Proveedor {
     @BsonId
     private ObjectId id;
@@ -16,17 +14,13 @@ public class Proveedor {
     @BsonProperty("contacto")
     private String contacto;  // Ahora solo es un número de teléfono (String)
 
-    @BsonProperty("productos_suministrados")
-    private List<ObjectId> productosSuministrados;
-
     // Constructor vacío para MongoDB
     public Proveedor() {}
 
-    public Proveedor(String nombre, String direccion, String contacto, List<ObjectId> productosSuministrados) {
+    public Proveedor(String nombre, String direccion, String contacto) {
         this.nombre = nombre;
         this.direccion = direccion;
         this.contacto = contacto;
-        this.productosSuministrados = productosSuministrados;
     }
 
     // Getters y Setters
@@ -41,7 +35,4 @@ public class Proveedor {
 
     public String getContacto() { return contacto; }
     public void setContacto(String contacto) { this.contacto = contacto; }
-
-    public List<ObjectId> getProductosSuministrados() { return productosSuministrados; }
-    public void setProductosSuministrados(List<ObjectId> productosSuministrados) { this.productosSuministrados = productosSuministrados; }
 }
