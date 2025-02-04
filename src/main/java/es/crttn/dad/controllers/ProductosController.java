@@ -1,6 +1,10 @@
 package es.crttn.dad.controllers;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import es.crttn.dad.App;
+import es.crttn.dad.DatabaseConector;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +33,9 @@ public class ProductosController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
+        MongoDatabase database = DatabaseConector.getInstance().getDatabase();
+
+        System.out.println("✅ Conexión exitosa a la base de datos: " + database.getName());
     }
 
     public BorderPane getRoot() {
