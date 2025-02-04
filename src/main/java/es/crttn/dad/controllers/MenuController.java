@@ -16,6 +16,7 @@ public class MenuController implements Initializable {
     ProductosController pc;
     StockController sc;
     InventarioController ic;
+    ProveedoresController prv;
 
     @FXML
     private BorderPane root;
@@ -36,6 +37,7 @@ public class MenuController implements Initializable {
         pc = new ProductosController();
         sc = new StockController();
         ic = new InventarioController();
+        prv = new ProveedoresController();
     }
 
     public BorderPane getRoot() {
@@ -48,9 +50,15 @@ public class MenuController implements Initializable {
     }
 
     @FXML
+    void onProveedoresAction(ActionEvent event) {
+        {App.getRc().getRoot().setCenter(prv.getRoot());}
+    }
+
+    @FXML
     void onStockAction(ActionEvent event) {
         App.getRc().getRoot().setCenter(sc.getRoot());
     }
+
 
     @FXML
     void onInventarioAction(ActionEvent event) {
