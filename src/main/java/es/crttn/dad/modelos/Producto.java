@@ -27,6 +27,14 @@ public class Producto {
     // Constructor vacío para MongoDB
     public Producto() {}
 
+    public Producto(String nombre, String categoria, ObjectId proveedorId, double precio) {
+        this.id = new ObjectId(); // Generar un nuevo ID automáticamente
+        this.nombre = nombre;
+        this.categoria = categoria;
+        this.proveedorId = proveedorId;
+        this.precio = precio;
+    }
+
     // Getters y Setters
     public ObjectId getId() { return id; }
     public void setId(ObjectId id) { this.id = id; }
