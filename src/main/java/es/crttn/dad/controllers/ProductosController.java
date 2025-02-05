@@ -181,6 +181,44 @@ public class ProductosController implements Initializable {
         }
     }
 
+    @FXML
+    void onBuscarAction(ActionEvent event) {
+        // Crear un cuadro de diálogo para ingresar el nombre
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Buscar Producto");
+        dialog.setHeaderText("Ingrese el nombre del producto a buscar");
+        dialog.setContentText("Nombre:");
+
+        // Capturar la entrada del usuario
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(this::searchProducto); // Buscar si se ingresó un nombre
+    }
+
+    private void searchProducto(String nombre) {
+        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+        MongoCollection<Producto> collection = db.getCollection("productos", Producto.class);
+
+        try {
+            // Buscar productos que coincidan exactamente con el nombre ingresado
+            List<Producto> productoList = collection.find(Filters.eq("nombre", nombre))
+                    .into(new ArrayList<>());
+
+            // Actualizar la lista observable y refrescar la tabla
+            productosList.clear();
+            productosList.addAll(productoList);
+            productosTableView.refresh();
+
+            if (productosList.isEmpty()) {
+                mostrarAlerta("Información", "No se encontraron productos con el nombre: " + nombre);
+            }
+
+        } catch (Exception e) {
+            mostrarAlerta("Error", "No se pudo realizar la búsqueda.");
+            e.printStackTrace();
+        }
+    }
+
 
     @FXML
     void onModificarAction(ActionEvent event) {
