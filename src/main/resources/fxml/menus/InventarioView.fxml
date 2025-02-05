@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="root" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
     <bottom>
@@ -26,7 +27,11 @@
    <top>
       <VBox alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Gestión de Movimientos" />
+            <Label text="Gestión de Movimientos">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
             <GridPane alignment="CENTER" hgap="5.0" vgap="5.0">
               <columnConstraints>
                   <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -42,23 +47,23 @@
               </rowConstraints>
                <children>
                   <Label text="Tipo:" />
-                  <ComboBox prefWidth="150.0" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="tipocomboBox" prefWidth="150.0" GridPane.columnIndex="1" />
                   <Label text="Cantidad:" GridPane.columnIndex="2" />
-                  <TextField GridPane.columnIndex="3" />
+                  <TextField fx:id="cantidadTetxfield" GridPane.columnIndex="3" />
                   <Label text="Detalles:" GridPane.columnIndex="4" />
-                  <TextField GridPane.columnIndex="5" />
+                  <TextField fx:id="detallesTextfield" GridPane.columnIndex="5" />
                   <Label text="Fecha:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <DatePicker GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <DatePicker fx:id="fechaTextfield" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <Label text="ID Producto:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <TextField GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <TextField fx:id="idProductoTextfield" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                </children>
             </GridPane>
             <HBox alignment="TOP_CENTER" spacing="5.0">
                <children>
-                  <Button mnemonicParsing="false" text="Añadir Movimiento" />
-                  <Button mnemonicParsing="false" text="Actualizar" />
-                  <Button mnemonicParsing="false" text="Eliminar" />
-                  <Button mnemonicParsing="false" text="Buscar" />
+                  <Button fx:id="añadirButton" mnemonicParsing="false" onAction="#onAddAction" text="Añadir Movimiento" />
+                  <Button fx:id="actualizarButton" mnemonicParsing="false" onAction="#onUpdateAction" text="Actualizar" />
+                  <Button fx:id="eliminarButton" mnemonicParsing="false" onAction="#onDeleteAction" text="Eliminar" />
+                  <Button fx:id="buscarButton" mnemonicParsing="false" onAction="#onFindAction" text="Buscar" />
                </children>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -71,12 +76,13 @@
       </VBox>
    </top>
    <center>
-      <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="gestionmovimientosTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn prefWidth="75.0" text="ID" />
-          <TableColumn prefWidth="75.0" text="Tipo" />
-            <TableColumn prefWidth="75.0" text="Cantidad" />
-            <TableColumn prefWidth="75.0" text="Fecha" />
+          <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
+          <TableColumn fx:id="tipoColumn" prefWidth="75.0" text="Tipo" />
+            <TableColumn fx:id="cantidadColumn" prefWidth="75.0" text="Cantidad" />
+            <TableColumn fx:id="fechaColumn" prefWidth="75.0" text="Fecha" />
+            <TableColumn fx:id="detallesColumn" prefWidth="75.0" text="Detalles" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

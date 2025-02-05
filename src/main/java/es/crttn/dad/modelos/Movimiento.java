@@ -28,6 +28,17 @@ public class Movimiento {
 
     public Movimiento() {}
 
+    public Movimiento(ObjectId id, ObjectId productoId, String tipo, int cantidad, ObjectId proveedorId, ObjectId compradorId, Date fecha, String detalles) {
+        this.id = id;
+        this.productoId = productoId;
+        this.tipo = tipo;
+        this.cantidad = cantidad;
+        this.proveedorId = proveedorId;
+        this.compradorId = compradorId;
+        this.fecha = fecha;
+        this.detalles = detalles;
+    }
+
     public ObjectId getId() { return id; }
     public void setId(ObjectId id) { this.id = id; }
 
