@@ -27,9 +27,9 @@
    <top>
       <VBox alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Gestión de Movimientos">
+            <Label text="Movimientos del Inventario">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="System Bold" size="18.0" />
                </font>
             </Label>
             <GridPane alignment="CENTER" hgap="5.0" vgap="5.0">

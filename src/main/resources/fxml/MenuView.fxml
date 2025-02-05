@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
@@ -22,7 +22,7 @@
             <Button minHeight="40.0" minWidth="150.0" mnemonicParsing="false" onAction="#onProductosAction" text="Gestión de Productos" />
             <Button minHeight="40.0" minWidth="150.0" mnemonicParsing="false" onAction="#onProveedoresAction" text="Gestión de Proveedores" />
             <Button minHeight="40.0" minWidth="150.0" mnemonicParsing="false" onAction="#onStockAction" text="Gestión de Stock" />
-            <Button minHeight="40.0" minWidth="150.0" mnemonicParsing="false" onAction="#onInventarioAction" text="Moviminetos de Inventario" />
+            <Button minHeight="40.0" minWidth="150.0" mnemonicParsing="false" onAction="#onInventarioAction" text="Gestión de Inventario" />
          </children>
       </VBox>
    </center>
