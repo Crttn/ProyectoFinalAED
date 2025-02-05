@@ -130,16 +130,30 @@ public class InventarioController implements Initializable {
         Date fecha = java.sql.Date.valueOf(fechaTextfield.getValue());
         String detalles = detallesTextfield.getText();
 
-        Movimiento nuevoMovimiento = new Movimiento(new ObjectId(), new ObjectId(idProducto), tipo, cantidad, null, null, fecha, detalles);
+        // Verificar si el idProducto es válido (debe tener 24 caracteres hexadecimales)
+        ObjectId productoId;
+        try {
+            // Si el idProducto es válido, se usa el valor proporcionado
+            productoId = new ObjectId(idProducto);
+        } catch (IllegalArgumentException e) {
+            // Si el idProducto no es válido, se genera un ObjectId automático
+            productoId = new ObjectId();
+        }
 
+        // Crear el nuevo movimiento con el idProducto (ya sea el proporcionado o generado)
+        Movimiento nuevoMovimiento = new Movimiento(new ObjectId(), productoId, tipo, cantidad, null, null, fecha, detalles);
+
+        // Llamar a la función para agregar el movimiento a la base de datos
         agregarMovimientoABaseDeDatos(nuevoMovimiento);
 
+        // Limpiar los campos después de agregar el movimiento
         idProductoTextfield.clear();
         tipocomboBox.setValue(null);
         cantidadTetxfield.clear();
         fechaTextfield.setValue(null);
         detallesTextfield.clear();
     }
+
 
     private void agregarMovimientoABaseDeDatos(Movimiento movimiento) {
         MongoDatabase db = DatabaseConector.getInstance().getDatabase();
