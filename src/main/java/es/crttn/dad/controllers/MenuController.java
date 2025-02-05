@@ -38,6 +38,9 @@ public class MenuController implements Initializable {
         sc = new StockController();
         ic = new InventarioController();
         prv = new ProveedoresController();
+
+        prv.setProductosController(pc);
+        //pasar pc a prv
     }
 
     public BorderPane getRoot() {

@@ -2,6 +2,8 @@ package es.crttn.dad.controllers;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import es.crttn.dad.App;
 import es.crttn.dad.DatabaseConector;
 import es.crttn.dad.modelos.Producto;
@@ -28,6 +30,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ProveedoresController implements Initializable {
+    private ProductosController productosController;
+
+
 
     public ProveedoresController() {
         try {
@@ -59,13 +64,7 @@ public class ProveedoresController implements Initializable {
         MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
         List<Proveedor> proveedores = collection.find().into(new ArrayList<>());
 
-        for (Proveedor p : proveedores) {
-            System.out.println("ID: " + p.getId().toHexString());
-            System.out.println("nombre: " + p.getNombre());
-            System.out.println("Dirección: " + p.getDireccion());
-            System.out.println("Contacto: " + p.getContacto());
-            System.out.println("-----------------------------");
-        }
+
 
         Platform.runLater(() -> {
             proveedoresList.setAll(proveedores);
@@ -91,8 +90,15 @@ public class ProveedoresController implements Initializable {
     @FXML
     private TableColumn<Proveedor, String> nombreColumn;
 
+
+
     @FXML
     private BorderPane root;
+
+    //establecer productoscontroller
+    public void setProductosController(ProductosController productosController) {
+        this.productosController = productosController;
+    }
 
     @FXML
     void onAgregarAction(ActionEvent event) {
@@ -177,11 +183,181 @@ public class ProveedoresController implements Initializable {
 
     @FXML
     void onEliminarAction(ActionEvent event) {
+        // Obtener el proveedor seleccionado de la tabla.
+        Proveedor selectedProveedor = proveedoresTableView.getSelectionModel().getSelectedItem();
 
+        if (selectedProveedor == null) {
+            mostrarAlerta("Error", "Debes seleccionar un proveedor para eliminar.");
+            return;
+        }
+
+        // Crear una alerta de confirmación.
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmar eliminación");
+        alert.setHeaderText("Si elimina este proveedor tambien desaparecerán los datos asociados a este.");
+        alert.setContentText("¿Está seguro de continuar?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            deleteProveedorFromDatabase(selectedProveedor);
+
+        }
+    }
+
+    private void deleteProveedorFromDatabase(Proveedor proveedor) {
+        try {
+            MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+            MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
+
+            // Eliminar el proveedor usando su ObjectId.
+            collection.deleteOne(Filters.eq("_id", proveedor.getId()));
+
+            // Obtener productos y eliminar todos los productos asociados al proveedor.
+            MongoCollection<Producto> productosCollection = db.getCollection("productos", Producto.class);
+            productosCollection.deleteMany(Filters.eq("proveedor_id", proveedor.getId()));
+
+            // Remover el proveedor de la lista observable.
+            proveedoresTableView.getItems().remove(proveedor);
+            productosController.refreshProducts();
+
+
+            // Mostrar alerta de éxito.
+            mostrarAlerta("Éxito", "El proveedor ha sido eliminado correctamente.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo eliminar el proveedor: " + e.getMessage());
+        }
     }
 
     @FXML
     void onModificarAction(ActionEvent event) {
+        // Obtener el proveedor seleccionado de la tabla.
+        Proveedor selectedProveedor = proveedoresTableView.getSelectionModel().getSelectedItem();
 
+        if (selectedProveedor == null) {
+            mostrarAlerta("Error", "Debes seleccionar un proveedor para editar.");
+            return;
+        }
+
+        // Crear un cuadro de diálogo para editar el proveedor.
+        Dialog<Proveedor> dialog = new Dialog<>();
+        dialog.setTitle("Editar Proveedor");
+        dialog.setHeaderText("Modifica los datos del proveedor");
+
+        // Botón de actualizar.
+        ButtonType updateButtonType = new ButtonType("Actualizar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(updateButtonType, ButtonType.CANCEL);
+
+        // Crear el formulario de edición.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField nombreField = new TextField(selectedProveedor.getNombre());
+        TextField direccionField = new TextField(selectedProveedor.getDireccion());
+        TextField contactoField = new TextField(selectedProveedor.getContacto());
+
+        grid.add(new Label("Nombre:"), 0, 0);
+        grid.add(nombreField, 1, 0);
+        grid.add(new Label("Dirección:"), 0, 1);
+        grid.add(direccionField, 1, 1);
+        grid.add(new Label("Contacto:"), 0, 2);
+        grid.add(contactoField, 1, 2);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Convertir los datos del formulario en el proveedor modificado.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == updateButtonType) {
+                selectedProveedor.setNombre(nombreField.getText());
+                selectedProveedor.setDireccion(direccionField.getText());
+                selectedProveedor.setContacto(contactoField.getText());
+                return selectedProveedor;
+            }
+            return null;
+        });
+
+        // Mostrar el diálogo y, si se confirma, actualizar en la base de datos.
+        Optional<Proveedor> result = dialog.showAndWait();
+        result.ifPresent(this::updateProveedorInDatabase);
     }
+
+
+    private void updateProveedorInDatabase(Proveedor proveedor) {
+        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+        MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
+
+        try {
+            // Actualizar el documento usando el ObjectId.
+            collection.updateOne(Filters.eq("_id", proveedor.getId()),
+                    Updates.combine(
+                            Updates.set("nombre", proveedor.getNombre()),
+                            Updates.set("direccion", proveedor.getDireccion()),
+                            Updates.set("contacto", proveedor.getContacto())
+                    ));
+            proveedoresTableView.refresh();
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo actualizar el proveedor.");
+        }
+    }
+
+
+
+    @FXML
+    void onBuscarAction(ActionEvent event) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Buscar Producto");
+        dialog.setHeaderText("Ingrese el nombre del proveedor");
+        dialog.setContentText("Nombre:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(this::searchProveedor); // Buscar si se ingresó un nombre
+    }
+
+    private void searchProveedor(String nombre) {
+        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+        MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
+
+        try {
+            if (nombre.isEmpty()) {
+                // Si el nombre está vacío, restauramos todos los proveedores.
+                List<Proveedor> proveedores = collection.find().into(new ArrayList<>());
+                proveedoresList.setAll(proveedores);
+                proveedoresTableView.refresh();
+                return;
+            }
+
+            // Buscar proveedores cuyo nombre contenga el término ingresado.
+            List<Proveedor> proveedorList = collection.find(Filters.regex("nombre", ".*" + nombre + ".*", "i"))
+                    .into(new ArrayList<>());
+
+            // Actualizar la lista observable y refrescar la tabla
+            proveedoresList.clear();
+            proveedoresList.addAll(proveedorList);
+            proveedoresTableView.refresh();
+
+            if (proveedoresList.isEmpty()) {
+                mostrarAlerta("Información", "No se encontraron proveedores con el nombre que contiene: " + nombre);
+            }
+
+        } catch (Exception e) {
+            mostrarAlerta("Error", "No se pudo realizar la búsqueda.");
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
 }

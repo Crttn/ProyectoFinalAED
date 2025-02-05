@@ -50,6 +50,8 @@ public class ProductosController implements Initializable {
     @FXML
     private BorderPane root;
 
+
+
     ObservableList productosList;
 
     public ProductosController() {
@@ -92,6 +94,10 @@ public class ProductosController implements Initializable {
         Platform.runLater(() -> {
             productosList.setAll(productos); // Actualizar la lista observable en la UI
         });
+    }
+
+    public void refreshProducts() {
+        showData();
     }
 
     @FXML
@@ -388,4 +394,6 @@ public class ProductosController implements Initializable {
     void onBackAction(ActionEvent event) {
         App.getRc().getRoot().setCenter(App.getRc().getMc().getRoot());
     }
+
+
 }

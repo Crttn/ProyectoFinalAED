@@ -47,7 +47,8 @@
                     <children>
                         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onAgregarAction" text="Agregar" />
                         <Button mnemonicParsing="false" onAction="#onModificarAction" text="Modificar" />
-                        <Button mnemonicParsing="false" onAction="#onEliminarAction" text="Eliminar" />
+                        <Button mnemonicParsing="false" onAction="#onBuscarAction" text="Buscar" />
+                  <Button mnemonicParsing="false" onAction="#onEliminarAction" text="Eliminar" />
                     </children>
                     <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
