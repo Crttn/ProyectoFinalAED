@@ -331,6 +331,8 @@ public class ProductosController implements Initializable {
 
             // Refrescar la tabla
             productosTableView.refresh();
+            stockController.refreshStock();
+
         } catch (Exception e) {
             mostrarAlerta("Error", "No se pudo actualizar el producto.");
             e.printStackTrace();

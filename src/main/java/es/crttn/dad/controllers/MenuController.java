@@ -43,7 +43,6 @@ public class MenuController implements Initializable {
         pc.setStockController(sc);
         prv.setStockController(sc);
 
-        //pasar pc a prv
     }
 
     public BorderPane getRoot() {
