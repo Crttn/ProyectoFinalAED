@@ -1,6 +1,7 @@
 package es.crttn.dad;
 
 import es.crttn.dad.controllers.MenuController;
+import es.crttn.dad.controllers.StockController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -34,6 +35,8 @@ public class RootController implements Initializable {
 
         getRoot().setCenter(mc.getRoot());
     }
+
+
 
     public BorderPane getRoot() {
         return root;

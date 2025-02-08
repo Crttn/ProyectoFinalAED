@@ -21,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.net.URL;
 import java.util.*;
 
 public class ProductosController implements Initializable {
+    private StockController stockController;
 
     @FXML
     private TableView<Producto> productosTableView;
@@ -50,7 +52,9 @@ public class ProductosController implements Initializable {
     @FXML
     private BorderPane root;
 
-
+    public void setStockController(StockController stockController) {
+        this.stockController = stockController;
+    }
 
     ObservableList productosList;
 
@@ -373,14 +377,22 @@ public class ProductosController implements Initializable {
         try {
             MongoDatabase db = DatabaseConector.getInstance().getDatabase();
             MongoCollection<Producto> collection = db.getCollection("productos", Producto.class);
+            MongoCollection<Document> stockCollection = db.getCollection("stock");
 
             // Eliminar el producto usando su ObjectId
             collection.deleteOne(Filters.eq("_id", producto.getId()));
 
-            // Eliminarlo también de la lista observable
-            productosTableView.getItems().remove(producto);
+            // Eliminar del stock también
+            stockCollection.deleteOne(Filters.eq("producto_id", producto.getId()));
 
             mostrarAlerta("Éxito", "El producto ha sido eliminado correctamente.");
+
+            productosTableView.getItems().remove(producto);
+
+            stockController.refreshStock();
+
+
+
         } catch (Exception e) {
             mostrarAlerta("Error", "No se pudo eliminar el producto: " + e.getMessage());
             e.printStackTrace();

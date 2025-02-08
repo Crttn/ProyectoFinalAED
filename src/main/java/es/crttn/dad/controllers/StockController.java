@@ -53,6 +53,7 @@ public class StockController implements Initializable {
     // Mapa para almacenar la asociación: id de producto -> nombre
     private Map<ObjectId, String> productNameMap;
 
+
     public StockController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menus/StockView.fxml"));
@@ -195,6 +196,9 @@ public class StockController implements Initializable {
         collection.insertOne(stock);
         showData();
     }
+
+    public void refreshStock() { showData(); }
+
 
     @FXML
     void onBuscarAction(ActionEvent event) {

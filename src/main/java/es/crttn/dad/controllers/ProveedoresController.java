@@ -8,6 +8,7 @@ import es.crttn.dad.App;
 import es.crttn.dad.DatabaseConector;
 import es.crttn.dad.modelos.Producto;
 import es.crttn.dad.modelos.Proveedor;
+import es.crttn.dad.modelos.Stock;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -31,7 +32,7 @@ import java.util.ResourceBundle;
 
 public class ProveedoresController implements Initializable {
     private ProductosController productosController;
-
+    private StockController stockController;
 
 
     public ProveedoresController() {
@@ -98,6 +99,11 @@ public class ProveedoresController implements Initializable {
     //establecer productoscontroller
     public void setProductosController(ProductosController productosController) {
         this.productosController = productosController;
+    }
+
+    //establecer stock
+    public void setStockController(StockController stockController) {
+        this.stockController = stockController;
     }
 
     @FXML
@@ -207,22 +213,40 @@ public class ProveedoresController implements Initializable {
     private void deleteProveedorFromDatabase(Proveedor proveedor) {
         try {
             MongoDatabase db = DatabaseConector.getInstance().getDatabase();
-            MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
-
-            // Eliminar el proveedor usando su ObjectId.
-            collection.deleteOne(Filters.eq("_id", proveedor.getId()));
-
-            // Obtener productos y eliminar todos los productos asociados al proveedor.
+            MongoCollection<Proveedor> proveedoresCollection = db.getCollection("proveedores", Proveedor.class);
             MongoCollection<Producto> productosCollection = db.getCollection("productos", Producto.class);
+            MongoCollection<Stock> stockCollection = db.getCollection("stock", Stock.class); // Asegúrate de tener importado el modelo Stock
+
+            // Primero, obtener la lista de productos asociados al proveedor
+            List<Producto> productosAsociados = productosCollection.find(Filters.eq("proveedor_id", proveedor.getId()))
+                    .into(new ArrayList<>());
+            List<ObjectId> productosIds = new ArrayList<>();
+            for (Producto p : productosAsociados) {
+                productosIds.add(p.getId());
+            }
+
+            // Eliminar el proveedor
+            proveedoresCollection.deleteOne(Filters.eq("_id", proveedor.getId()));
+
+            // Eliminar los productos asociados al proveedor
             productosCollection.deleteMany(Filters.eq("proveedor_id", proveedor.getId()));
 
-            // Remover el proveedor de la lista observable.
+            // Si existen productos asociados, eliminar el stock correspondiente
+            if (!productosIds.isEmpty()) {
+                stockCollection.deleteMany(Filters.in("producto_id", productosIds));
+            }
+
+            // Remover el proveedor de la lista observable en la vista
             proveedoresTableView.getItems().remove(proveedor);
+
             productosController.refreshProducts();
+            stockController.refreshStock();
+
+
 
 
             // Mostrar alerta de éxito.
-            mostrarAlerta("Éxito", "El proveedor ha sido eliminado correctamente.");
+            mostrarAlerta("Éxito", "El proveedor, sus productos y el stock asociado han sido eliminados correctamente.");
         } catch (Exception e) {
             e.printStackTrace();
             mostrarAlerta("Error", "No se pudo eliminar el proveedor: " + e.getMessage());

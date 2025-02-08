@@ -40,6 +40,9 @@ public class MenuController implements Initializable {
         prv = new ProveedoresController();
 
         prv.setProductosController(pc);
+        pc.setStockController(sc);
+        prv.setStockController(sc);
+
         //pasar pc a prv
     }
 
