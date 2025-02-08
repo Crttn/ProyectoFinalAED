@@ -22,6 +22,7 @@ public class Stock {
         this.cantidadDisponible = cantidadDisponible;
     }
 
+
     // Getters y Setters
     public ObjectId getId() { return id; }
     public void setId(ObjectId id) { this.id = id; }
