@@ -30,6 +30,7 @@ import java.util.*;
 
 public class ProductosController implements Initializable {
     private StockController stockController;
+    private InventarioController inventarioController;
 
     @FXML
     private TableView<Producto> productosTableView;
@@ -58,7 +59,8 @@ public class ProductosController implements Initializable {
 
     ObservableList productosList;
 
-    public ProductosController() {
+    public ProductosController(InventarioController inventarioController) {
+        this.inventarioController = inventarioController;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menus/ProductosView.fxml"));
             loader.setController(this);
@@ -67,6 +69,8 @@ public class ProductosController implements Initializable {
             throw new RuntimeException(e);
         }
     }
+
+    ObservableList prodcutosList;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -190,6 +194,7 @@ public class ProductosController implements Initializable {
             collection.insertOne(producto);
             productosList.add(producto); // Agregar a la lista observable
             productosTableView.refresh();
+            inventarioController.actualizarListaProductos();
         } catch (Exception e) {
             mostrarAlerta("Error", "No se pudo agregar el producto.");
             e.printStackTrace();
