@@ -10,6 +10,8 @@ public class Movimiento {
     @BsonId
     private ObjectId id;
 
+    private Producto producto;
+
     @BsonProperty("producto_id")
     private ObjectId productoId;
 
@@ -28,15 +30,22 @@ public class Movimiento {
 
     public Movimiento() {}
 
-    public Movimiento(ObjectId id, ObjectId productoId, String tipo, int cantidad, ObjectId proveedorId, ObjectId compradorId, Date fecha, String detalles) {
+    public Movimiento(ObjectId id, Producto producto, String tipo, int cantidad, ObjectId proveedorId, ObjectId compradorId, Date fecha, String detalles) {
         this.id = id;
-        this.productoId = productoId;
+        this.producto = producto;
+        this.productoId = producto.getId();
         this.tipo = tipo;
         this.cantidad = cantidad;
         this.proveedorId = proveedorId;
         this.compradorId = compradorId;
         this.fecha = fecha;
         this.detalles = detalles;
+    }
+
+    public Producto getProducto() { return producto; }
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+        this.productoId = producto.getId();
     }
 
     public ObjectId getId() { return id; }

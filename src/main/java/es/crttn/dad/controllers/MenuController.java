@@ -34,9 +34,10 @@ public class MenuController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        pc = new ProductosController();
-        sc = new StockController();
         ic = new InventarioController();
+        pc = new ProductosController(ic); //Pasar inventario Controller a Productos controller
+
+        sc = new StockController();
         prv = new ProveedoresController();
 
         prv.setProductosController(pc);

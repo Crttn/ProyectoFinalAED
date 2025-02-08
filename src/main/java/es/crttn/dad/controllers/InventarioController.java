@@ -7,6 +7,7 @@ import com.mongodb.client.model.Updates;
 import es.crttn.dad.App;
 import es.crttn.dad.DatabaseConector;
 import es.crttn.dad.modelos.Movimiento;
+import es.crttn.dad.modelos.Producto;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -20,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.util.StringConverter;
 import org.bson.types.ObjectId;
 
 import java.io.IOException;
@@ -63,10 +65,7 @@ public class InventarioController implements Initializable {
     private TableView<Movimiento> gestionmovimientosTable;
 
     @FXML
-    private TableColumn<Movimiento, String> idColumn;
-
-    @FXML
-    private TextField idProductoTextfield;
+    private TableColumn<Movimiento, String> nombreColumn;
 
     @FXML
     private TableColumn<Movimiento, String> tipoColumn;
@@ -76,6 +75,9 @@ public class InventarioController implements Initializable {
 
     @FXML
     private ComboBox<String> tipocomboBox;
+
+    @FXML
+    private ComboBox<Producto> productoCombobox;
 
     private ObservableList<Movimiento> movimientosList;
 
@@ -89,11 +91,25 @@ public class InventarioController implements Initializable {
         }
     }
 
+    public void actualizarListaProductos() {
+        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+        MongoCollection<Producto> productoCollection = db.getCollection("productos", Producto.class);
+        List<Producto> productos = productoCollection.find().into(new ArrayList<>());
+        Platform.runLater(() -> {
+            productoCombobox.setItems(FXCollections.observableArrayList(productos));
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tipocomboBox.getItems().addAll("Venta", "Compra", "Ajuste");
 
-        idColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProductoId().toString()));
+        // Configurar la columna nombreColumn para mostrar el nombre del producto
+        nombreColumn.setCellValueFactory(cellData -> {
+            Producto producto = cellData.getValue().getProducto();
+            return new SimpleStringProperty(producto != null ? producto.getNombre() : "");
+        });
+
         tipoColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTipo()));
         cantidadColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getCantidad()));
         detallesColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDetalles()));
@@ -103,6 +119,24 @@ public class InventarioController implements Initializable {
 
         movimientosList = FXCollections.observableArrayList();
         gestionmovimientosTable.setItems(movimientosList);
+
+        // Inicializar el ComboBox con los productos
+        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+        MongoCollection<Producto> productoCollection = db.getCollection("productos", Producto.class);
+        List<Producto> productos = productoCollection.find().into(new ArrayList<>());
+        productoCombobox.setItems(FXCollections.observableArrayList(productos));
+
+        productoCombobox.setConverter(new StringConverter<Producto>() {
+            @Override
+            public String toString(Producto producto) {
+                return producto != null ? producto.getNombre() : "";
+            }
+
+            @Override
+            public Producto fromString(String string) {
+                return null; // No se utiliza
+            }
+        });
 
         showData();
     }
@@ -124,30 +158,27 @@ public class InventarioController implements Initializable {
 
     @FXML
     void onAddAction(ActionEvent event) {
-        String idProducto = idProductoTextfield.getText();
+
+        Producto selectedProducto = productoCombobox.getValue();
+        if (selectedProducto == null) {
+            mostrarAlerta("Error", "Debe seleccionar un producto.");
+            return;
+        }
+
+
         String tipo = tipocomboBox.getValue();
         int cantidad = Integer.parseInt(cantidadTetxfield.getText());
         Date fecha = java.sql.Date.valueOf(fechaTextfield.getValue());
         String detalles = detallesTextfield.getText();
 
-        // Verificar si el idProducto es válido (debe tener 24 caracteres hexadecimales)
-        ObjectId productoId;
-        try {
-            // Si el idProducto es válido, se usa el valor proporcionado
-            productoId = new ObjectId(idProducto);
-        } catch (IllegalArgumentException e) {
-            // Si el idProducto no es válido, se genera un ObjectId automático
-            productoId = new ObjectId();
-        }
 
-        // Crear el nuevo movimiento con el idProducto (ya sea el proporcionado o generado)
-        Movimiento nuevoMovimiento = new Movimiento(new ObjectId(), productoId, tipo, cantidad, null, null, fecha, detalles);
+        Movimiento nuevoMovimiento = new Movimiento(new ObjectId(), selectedProducto, tipo, cantidad, null, null, fecha, detalles);
 
         // Llamar a la función para agregar el movimiento a la base de datos
         agregarMovimientoABaseDeDatos(nuevoMovimiento);
 
         // Limpiar los campos después de agregar el movimiento
-        idProductoTextfield.clear();
+        productoCombobox.setValue(null);
         tipocomboBox.setValue(null);
         cantidadTetxfield.clear();
         fechaTextfield.setValue(null);
@@ -255,7 +286,22 @@ public class InventarioController implements Initializable {
         grid.setHgap(10);
         grid.setVgap(10);
 
-        TextField idProductoField = new TextField(selectedMovimiento.getProductoId().toString());
+        ComboBox<Producto> productoComboBox = new ComboBox<>();
+        productoComboBox.setItems(productoCombobox.getItems());
+        productoComboBox.setValue(selectedMovimiento.getProducto());
+
+        productoComboBox.setConverter(new StringConverter<Producto>() {
+            @Override
+            public String toString(Producto producto) {
+                return producto != null ? producto.getNombre() : "";
+            }
+
+            @Override
+            public Producto fromString(String string) {
+                return null; // No se utiliza
+            }
+        });
+
         ComboBox<String> tipoComboBox = new ComboBox<>();
         tipoComboBox.getItems().addAll("Venta", "Compra", "Ajuste");
         tipoComboBox.setValue(selectedMovimiento.getTipo());
@@ -263,8 +309,8 @@ public class InventarioController implements Initializable {
         DatePicker fechaPicker = new DatePicker(new java.sql.Date(selectedMovimiento.getFecha().getTime()).toLocalDate());
         TextField detallesField = new TextField(selectedMovimiento.getDetalles());
 
-        grid.add(new Label("ID Producto:"), 0, 0);
-        grid.add(idProductoField, 1, 0);
+        grid.add(new Label("Producto:"), 0, 0);
+        grid.add(productoComboBox, 1, 0);
         grid.add(new Label("Tipo:"), 0, 1);
         grid.add(tipoComboBox, 1, 1);
         grid.add(new Label("Cantidad:"), 0, 2);
@@ -278,7 +324,14 @@ public class InventarioController implements Initializable {
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                selectedMovimiento.setProductoId(new ObjectId(idProductoField.getText()));
+
+                Producto selectedProducto = productoComboBox.getValue();
+                if (selectedProducto == null) {
+                    mostrarAlerta("Error", "Debe seleccionar un producto.");
+                    return;
+                }
+
+                selectedMovimiento.setProducto(selectedProducto);
                 selectedMovimiento.setTipo(tipoComboBox.getValue());
                 selectedMovimiento.setCantidad(Integer.parseInt(cantidadField.getText()));
                 selectedMovimiento.setFecha(new Date(java.sql.Date.valueOf(fechaPicker.getValue()).getTime()));

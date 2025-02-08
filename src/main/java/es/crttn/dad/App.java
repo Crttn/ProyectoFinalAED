@@ -1,5 +1,7 @@
 package es.crttn.dad;
 
+import es.crttn.dad.controllers.InventarioController;
+import es.crttn.dad.controllers.ProductosController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -14,6 +16,9 @@ public class App extends Application {
 
         rc = new RootController();
         dbc = new DatabaseConector();
+
+        InventarioController inventarioController= new InventarioController();
+        ProductosController productosController = new ProductosController(inventarioController);
 
         primaryStage.setTitle("Gestión de Inventario");
         primaryStage.setScene(new Scene(rc.getRoot(), 800, 600));
