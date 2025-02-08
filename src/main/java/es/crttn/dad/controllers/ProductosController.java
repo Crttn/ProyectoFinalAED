@@ -67,9 +67,14 @@ public class ProductosController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        // Convierte el tipo ObjectID a strign para poder manejarlo
         idColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId().toHexString()));
-        idProveedorColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProveedorId().toHexString()));
+
+        // mostrar nombre proveedor
+        idProveedorColumn.setCellValueFactory(cellData -> {
+            ObjectId proveedorId = cellData.getValue().getProveedorId();
+            String proveedorNombre = buscarNombreProveedor(proveedorId);
+            return new SimpleStringProperty(proveedorNombre);
+        });
 
         nombreColumn.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         categoriaColumn.setCellValueFactory(new PropertyValueFactory<>("categoria"));
