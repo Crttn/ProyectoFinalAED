@@ -2,6 +2,8 @@ package es.crttn.dad.controllers;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import es.crttn.dad.App;
 import es.crttn.dad.DatabaseConector;
 import es.crttn.dad.modelos.Producto;
@@ -113,6 +115,18 @@ public class StockController implements Initializable {
         Platform.runLater(() -> {
             stockList.setAll(stock);
         });
+    }
+
+    public void actualizarStock(ObjectId productoId, int cantidad) {
+        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+        MongoCollection<Stock> collection = db.getCollection("stock", Stock.class);
+
+        Stock stock = collection.find(Filters.eq("producto_id", productoId)).first();
+        if (stock != null) {
+            int nuevaCantidad = stock.getCantidadDisponible() - cantidad;
+            collection.updateOne(Filters.eq("producto_id", productoId), Updates.set("cantidad_disponible", nuevaCantidad));
+            showData();
+        }
     }
 
     public BorderPane getRoot() {

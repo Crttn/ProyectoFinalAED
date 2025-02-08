@@ -2,6 +2,7 @@ package es.crttn.dad;
 
 import es.crttn.dad.controllers.InventarioController;
 import es.crttn.dad.controllers.ProductosController;
+import es.crttn.dad.controllers.StockController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -17,7 +18,8 @@ public class App extends Application {
         rc = new RootController();
         dbc = new DatabaseConector();
 
-        InventarioController inventarioController= new InventarioController();
+        StockController stockController = new StockController();
+        InventarioController inventarioController= new InventarioController(stockController);
         ProductosController productosController = new ProductosController(inventarioController);
 
         primaryStage.setTitle("Gestión de Inventario");

@@ -8,6 +8,7 @@ import es.crttn.dad.App;
 import es.crttn.dad.DatabaseConector;
 import es.crttn.dad.modelos.Movimiento;
 import es.crttn.dad.modelos.Producto;
+import es.crttn.dad.modelos.Stock;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -30,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class InventarioController implements Initializable {
+
+    private StockController stockController;
 
     @FXML
     private BorderPane root;
@@ -81,7 +84,8 @@ public class InventarioController implements Initializable {
 
     private ObservableList<Movimiento> movimientosList;
 
-    public InventarioController() {
+    public InventarioController(StockController stockController) {
+        this.stockController = stockController;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/menus/InventarioView.fxml"));
             loader.setController(this);
@@ -194,6 +198,7 @@ public class InventarioController implements Initializable {
             collection.insertOne(movimiento);
             movimientosList.add(movimiento);
             gestionmovimientosTable.refresh();
+            stockController.actualizarStock(movimiento.getProductoId(), movimiento.getCantidad());
         } catch (Exception e) {
             mostrarAlerta("Error", "No se pudo agregar el movimiento.");
             e.printStackTrace();
@@ -347,15 +352,20 @@ public class InventarioController implements Initializable {
         MongoCollection<Movimiento> collection = db.getCollection("movimientos", Movimiento.class);
 
         try {
-            collection.updateOne(Filters.eq("_id", movimiento.getId()),
-                    Updates.combine(
-                            Updates.set("producto_id", movimiento.getProductoId()),
-                            Updates.set("tipo", movimiento.getTipo()),
-                            Updates.set("cantidad", movimiento.getCantidad()),
-                            Updates.set("fecha", movimiento.getFecha()),
-                            Updates.set("detalles", movimiento.getDetalles())
-                    ));
-            gestionmovimientosTable.refresh();
+            Movimiento movimientoOriginal = collection.find(Filters.eq("_id", movimiento.getId())).first();
+            if (movimientoOriginal != null) {
+                int diferenciaCantidad = movimiento.getCantidad() - movimientoOriginal.getCantidad();
+                collection.updateOne(Filters.eq("_id", movimiento.getId()),
+                        Updates.combine(
+                                Updates.set("producto_id", movimiento.getProductoId()),
+                                Updates.set("tipo", movimiento.getTipo()),
+                                Updates.set("cantidad", movimiento.getCantidad()),
+                                Updates.set("fecha", movimiento.getFecha()),
+                                Updates.set("detalles", movimiento.getDetalles())
+                        ));
+                stockController.actualizarStock(movimiento.getProductoId(), diferenciaCantidad);
+                showData();
+            }
         } catch (Exception e) {
             mostrarAlerta("Error", "No se pudo actualizar el movimiento.");
             e.printStackTrace();
