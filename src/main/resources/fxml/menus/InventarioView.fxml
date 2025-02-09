@@ -64,6 +64,7 @@
                   <Button fx:id="actualizarButton" mnemonicParsing="false" onAction="#onUpdateAction" text="Actualizar" />
                   <Button fx:id="eliminarButton" mnemonicParsing="false" onAction="#onDeleteAction" text="Eliminar" />
                   <Button fx:id="buscarButton" mnemonicParsing="false" onAction="#onFindAction" text="Buscar" />
+                  <Button fx:id="mostrarTodosButton" mnemonicParsing="false" onAction="#onMostrarTodosAction" text="Mostrar Todos" />
                </children>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

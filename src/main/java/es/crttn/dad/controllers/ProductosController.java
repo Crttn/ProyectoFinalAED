@@ -215,6 +215,11 @@ public class ProductosController implements Initializable {
         result.ifPresent(this::searchProducto); // Buscar si se ingresó un nombre
     }
 
+    @FXML
+    void onMostrarTodosAction(ActionEvent event) {
+        showData();
+    }
+
     private void searchProducto(String nombre) {
         MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Producto> collection = db.getCollection("productos", Producto.class);

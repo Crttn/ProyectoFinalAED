@@ -371,10 +371,10 @@ public class ProveedoresController implements Initializable {
         }
     }
 
-
-
-
-
+    @FXML
+    void onMostrarTodosAction(ActionEvent event) {
+        showData();
+    }
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

@@ -47,6 +47,9 @@ public class InventarioController implements Initializable {
     private Button buscarButton;
 
     @FXML
+    private Button mostrarTodosButton;
+
+    @FXML
     private TableColumn<Movimiento, Integer> cantidadColumn;
 
     @FXML
@@ -261,13 +264,32 @@ public class InventarioController implements Initializable {
         MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Movimiento> collection = db.getCollection("movimientos", Movimiento.class);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        List<Movimiento> movimientos = collection.find(Filters.eq("fecha", sdf.format(fecha))).into(new ArrayList<>());
+        // Convertir la fecha a solo la parte de la fecha (sin tiempo)
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fecha);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date startDate = cal.getTime();
+
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        Date endDate = cal.getTime();
+
+        List<Movimiento> movimientos = collection.find(Filters.and(
+                Filters.gte("fecha", startDate),
+                Filters.lt("fecha", endDate)
+        )).into(new ArrayList<>());
 
         Platform.runLater(() -> {
             movimientosList.setAll(movimientos);
             gestionmovimientosTable.refresh();
         });
+    }
+
+    @FXML
+    void onMostrarTodosAction(ActionEvent event) {
+        showData();
     }
 
     @FXML

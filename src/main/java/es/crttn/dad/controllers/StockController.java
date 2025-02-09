@@ -231,6 +231,11 @@ public class StockController implements Initializable {
         });
     }
 
+    @FXML
+    void onMostrarTodosAction(ActionEvent event) {
+        showData();
+    }
+
     private void filterStockByProductName(String searchText) {
         MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Stock> stockCollection = db.getCollection("stock", Stock.class);
