@@ -14,7 +14,7 @@
     <top>
         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
-                <Label text="Gestión de Proveedores">
+                <Label fx:id="titulo" text="Gestión de Proveedores" styleClass="titulo">
                     <font>
                         <Font name="System Bold" size="24.0" />
                     </font>
