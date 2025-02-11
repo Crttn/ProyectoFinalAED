@@ -27,7 +27,7 @@
    <top>
       <VBox alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Movimientos del Inventario">
+            <Label fx:id="titulo" text="Movimientos del Inventario" styleClass="titulo">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
