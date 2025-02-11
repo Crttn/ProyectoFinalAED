@@ -301,6 +301,7 @@ public class ProveedoresController implements Initializable {
 
         // Mostrar el diálogo y, si se confirma, actualizar en la base de datos.
         Optional<Proveedor> result = dialog.showAndWait();
+        // Si el botón de actualizar es presionado, se llama a la funcion y se le entrega el proveedor con los nuevos datos
         result.ifPresent(this::updateProveedorInDatabase);
     }
 
@@ -337,7 +338,6 @@ public class ProveedoresController implements Initializable {
     }
 
     private void searchProveedor(String nombre) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
 
         try {
