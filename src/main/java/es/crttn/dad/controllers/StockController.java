@@ -95,7 +95,6 @@ public class StockController implements Initializable {
 
     private void loadProductNameMap() {
         MongoDatabase db = DatabaseConector.getInstance().getDatabase();
-        // Asegúrate de que el nombre de la colección es correcto (por ejemplo, "productos")
         MongoCollection<Producto> productoCollection = db.getCollection("productos", Producto.class);
         List<Producto> productList = productoCollection.find().into(new ArrayList<>());
         productNameMap.clear();

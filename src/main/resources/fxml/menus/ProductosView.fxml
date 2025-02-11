@@ -30,9 +30,9 @@
       </HBox>
    </bottom>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="productosTableView" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="productosTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0">
               <columns>
                 <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
                 <TableColumn fx:id="nombreColumn" prefWidth="75.0" text="Nombre" />

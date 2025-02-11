@@ -30,7 +30,7 @@
         </HBox>
     </bottom>
     <center>
-        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
             <children>
                 <TableView fx:id="stockTableView" prefHeight="200.0" prefWidth="200.0">
                     <columns>
