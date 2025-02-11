@@ -55,6 +55,9 @@ public class StockController implements Initializable {
     // Mapa para almacenar la asociación: id de producto -> nombre
     private Map<ObjectId, String> productNameMap;
 
+    // Obtener la base de datos
+    MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+
 
     public StockController() {
         try {
@@ -94,7 +97,7 @@ public class StockController implements Initializable {
 
 
     private void loadProductNameMap() {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+
         MongoCollection<Producto> productoCollection = db.getCollection("productos", Producto.class);
         List<Producto> productList = productoCollection.find().into(new ArrayList<>());
         productNameMap.clear();
@@ -107,7 +110,6 @@ public class StockController implements Initializable {
     private void showData() {
         loadProductNameMap();
 
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Stock> collection = db.getCollection("stock", Stock.class);
         List<Stock> stock = collection.find().into(new ArrayList<>());
 
@@ -117,7 +119,6 @@ public class StockController implements Initializable {
     }
 
     public void actualizarStock(ObjectId productoId, int cantidad) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Stock> collection = db.getCollection("stock", Stock.class);
 
         Stock stock = collection.find(Filters.eq("producto_id", productoId)).first();
@@ -204,7 +205,6 @@ public class StockController implements Initializable {
     }
 
     private void agregarStockABaseDeDatos(Stock stock) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Stock> collection = db.getCollection("stock", Stock.class);
         collection.insertOne(stock);
         showData();
@@ -236,7 +236,6 @@ public class StockController implements Initializable {
     }
 
     private void filterStockByProductName(String searchText) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Stock> stockCollection = db.getCollection("stock", Stock.class);
         List<Stock> allStock = stockCollection.find().into(new ArrayList<>());
 
@@ -359,7 +358,6 @@ public class StockController implements Initializable {
     }
 
     private void modificarStockEnBaseDeDatos(Stock stock) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Stock> collection = db.getCollection("stock", Stock.class);
 
         // Actualizar el stock en la base de datos por su ID

@@ -85,6 +85,8 @@ public class InventarioController implements Initializable {
     @FXML
     private ComboBox<Producto> productoCombobox;
 
+    MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+
     private ObservableList<Movimiento> movimientosList;
 
     public InventarioController(StockController stockController) {
@@ -99,7 +101,6 @@ public class InventarioController implements Initializable {
     }
 
     public void actualizarListaProductos() {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Producto> productoCollection = db.getCollection("productos", Producto.class);
         List<Producto> productos = productoCollection.find().into(new ArrayList<>());
         Platform.runLater(() -> {
@@ -128,7 +129,6 @@ public class InventarioController implements Initializable {
         gestionmovimientosTable.setItems(movimientosList);
 
         // Inicializar el ComboBox con los productos
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Producto> productoCollection = db.getCollection("productos", Producto.class);
         List<Producto> productos = productoCollection.find().into(new ArrayList<>());
         productoCombobox.setItems(FXCollections.observableArrayList(productos));
@@ -153,7 +153,6 @@ public class InventarioController implements Initializable {
     }
 
     private void showData() {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Movimiento> collection = db.getCollection("movimientos", Movimiento.class);
 
         List<Movimiento> movimientos = collection.find().into(new ArrayList<>());
@@ -194,7 +193,6 @@ public class InventarioController implements Initializable {
 
 
     private void agregarMovimientoABaseDeDatos(Movimiento movimiento) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Movimiento> collection = db.getCollection("movimientos", Movimiento.class);
 
         try {
@@ -225,7 +223,6 @@ public class InventarioController implements Initializable {
     }
 
     private void eliminarMovimientoDeBaseDeDatos(Movimiento movimiento) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Movimiento> collection = db.getCollection("movimientos", Movimiento.class);
 
         try {
@@ -261,7 +258,6 @@ public class InventarioController implements Initializable {
     }
 
     private void buscarMovimientosPorFecha(Date fecha) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Movimiento> collection = db.getCollection("movimientos", Movimiento.class);
 
         // Convertir la fecha a solo la parte de la fecha (sin tiempo)
@@ -370,7 +366,6 @@ public class InventarioController implements Initializable {
     }
 
     private void actualizarMovimientoEnBaseDeDatos(Movimiento movimiento) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Movimiento> collection = db.getCollection("movimientos", Movimiento.class);
 
         try {

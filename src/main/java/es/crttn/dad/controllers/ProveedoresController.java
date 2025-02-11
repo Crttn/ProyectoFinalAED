@@ -34,6 +34,8 @@ public class ProveedoresController implements Initializable {
     private ProductosController productosController;
     private StockController stockController;
 
+    // Obtener la base de datos
+    MongoDatabase db = DatabaseConector.getInstance().getDatabase();
 
     public ProveedoresController() {
         try {
@@ -61,11 +63,9 @@ public class ProveedoresController implements Initializable {
 
 
     private void showData() {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+
         MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
         List<Proveedor> proveedores = collection.find().into(new ArrayList<>());
-
-
 
         Platform.runLater(() -> {
             proveedoresList.setAll(proveedores);
@@ -164,7 +164,6 @@ public class ProveedoresController implements Initializable {
     }
 
     private void agregarProveedorABaseDeDatos(Proveedor proveedor) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
 
         try {
@@ -212,7 +211,6 @@ public class ProveedoresController implements Initializable {
 
     private void deleteProveedorFromDatabase(Proveedor proveedor) {
         try {
-            MongoDatabase db = DatabaseConector.getInstance().getDatabase();
             MongoCollection<Proveedor> proveedoresCollection = db.getCollection("proveedores", Proveedor.class);
             MongoCollection<Producto> productosCollection = db.getCollection("productos", Producto.class);
             MongoCollection<Stock> stockCollection = db.getCollection("stock", Stock.class); // Asegúrate de tener importado el modelo Stock
@@ -308,7 +306,6 @@ public class ProveedoresController implements Initializable {
 
 
     private void updateProveedorInDatabase(Proveedor proveedor) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
 
         try {

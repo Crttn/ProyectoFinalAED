@@ -53,6 +53,8 @@ public class ProductosController implements Initializable {
     @FXML
     private BorderPane root;
 
+    MongoDatabase db = DatabaseConector.getInstance().getDatabase();
+
     public void setStockController(StockController stockController) {
         this.stockController = stockController;
     }
@@ -104,6 +106,7 @@ public class ProductosController implements Initializable {
 
         List<Producto> productos = collection.find().into(new ArrayList<>()); // Obtener los datos
 
+        // Ejecuta la consulta en un hilo secundario para que cargue la interfaz mientras carga la consulta
         Platform.runLater(() -> {
             productosList.setAll(productos); // Actualizar la lista observable en la UI
         });
@@ -187,7 +190,6 @@ public class ProductosController implements Initializable {
 
 
     private void agregarProductoABaseDeDatos(Producto producto) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Producto> collection = db.getCollection("productos", Producto.class);
 
         try {
@@ -221,7 +223,6 @@ public class ProductosController implements Initializable {
     }
 
     private void searchProducto(String nombre) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Producto> collection = db.getCollection("productos", Producto.class);
 
         try {
@@ -326,7 +327,6 @@ public class ProductosController implements Initializable {
 
 
     private void updateProductoInDatabase(Producto producto) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Producto> collection = db.getCollection("productos", Producto.class);
 
         try {
@@ -350,13 +350,11 @@ public class ProductosController implements Initializable {
     }
 
     private List<Proveedor> cargarProveedores() {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
         return collection.find().into(new ArrayList<>());
     }
 
     private String buscarNombreProveedor(ObjectId proveedorId) {
-        MongoDatabase db = DatabaseConector.getInstance().getDatabase();
         MongoCollection<Proveedor> collection = db.getCollection("proveedores", Proveedor.class);
 
         Proveedor proveedor = collection.find(Filters.eq("_id", proveedorId)).first();
@@ -387,7 +385,6 @@ public class ProductosController implements Initializable {
 
     public void deleteUserFromDatabase(Producto producto) {
         try {
-            MongoDatabase db = DatabaseConector.getInstance().getDatabase();
             MongoCollection<Producto> collection = db.getCollection("productos", Producto.class);
             MongoCollection<Document> stockCollection = db.getCollection("stock");
 
