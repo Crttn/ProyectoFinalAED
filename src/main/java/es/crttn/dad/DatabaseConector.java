@@ -15,11 +15,11 @@ public class DatabaseConector {
     private final MongoDatabase database;
 
     DatabaseConector() {
-        // 📌 REGISTRAR EL CODEC PARA POJO
+        // Permite mapear objetos Java (POJOs) a documentos BSON en MongoDB
         CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build());
         CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
 
-        // 📌 CREAR CLIENTE CON EL CODEC CONFIGURADO
+        /// Configura MongoDB con el codec para soportar POJOs
         MongoClientSettings settings = MongoClientSettings.builder()
                 .codecRegistry(codecRegistry)
                 .build();
