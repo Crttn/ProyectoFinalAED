@@ -141,7 +141,7 @@ public class InventarioController implements Initializable {
 
             @Override
             public Producto fromString(String string) {
-                return null; // No se utiliza
+                return null;
             }
         });
 

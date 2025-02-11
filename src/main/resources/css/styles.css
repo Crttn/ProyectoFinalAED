@@ -1,0 +1,21 @@
+#root {
+    -fx-background-color: #ADD8E6; /* Azul  */
+}
+
+.titulo {
+    -fx-alignment: left; /* Alineado a la izquierda */
+    -fx-font-family: Arial;
+    -fx-font-size: 30px;
+    -fx-text-fill: #1278BF; /* Color azul */
+    -fx-effect: dropshadow(gaussian, #508AD3, 9, 0, 0, 0); /* Sombra de texto */
+}
+
+.button {
+    -fx-background-color: #007BFF; /* Azul */
+    -fx-text-fill: white; /* Texto blanco */
+    -fx-font-size: 14px;
+}
+
+.button:hover {
+    -fx-background-color: #0056b3; /* Azul más claro en hover */
+}
