@@ -15,11 +15,11 @@ public class DatabaseConector {
     private final MongoDatabase database;
 
     DatabaseConector() {
-        // Permite mapear objetos Java (POJOs) a documentos BSON en MongoDB
+        // Permite manejar automaticamente Objetos como documentos BSON
         CodecRegistry pojoCodecRegistry = CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build());
         CodecRegistry codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
 
-        /// Configura MongoDB con el codec para soportar POJOs
+        // Configura MongoDB con el codec para soportar Objetos
         MongoClientSettings settings = MongoClientSettings.builder()
                 .codecRegistry(codecRegistry)
                 .build();
@@ -28,6 +28,7 @@ public class DatabaseConector {
         this.database = mongoClient.getDatabase("inventario").withCodecRegistry(codecRegistry); // Aplicar codec
     }
 
+    // Asegura que solo exista una única instancia de DatabaseConector
     public static DatabaseConector getInstance() {
         if (instance == null) {
             instance = new DatabaseConector();
@@ -35,6 +36,7 @@ public class DatabaseConector {
         return instance;
     }
 
+    // Permite obtener la referencia a la base de datos
     public MongoDatabase getDatabase() {
         return database;
     }

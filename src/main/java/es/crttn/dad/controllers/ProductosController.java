@@ -336,7 +336,7 @@ public class ProductosController implements Initializable {
                             Updates.set("nombre", producto.getNombre()),
                             Updates.set("categoria", producto.getCategoria()),
                             Updates.set("precio", producto.getPrecio()),
-                            Updates.set("proveedor_id", producto.getProveedorId()) // Actualizar proveedor
+                            Updates.set("proveedor_id", producto.getProveedorId())
                     ));
 
             // Refrescar la tabla
